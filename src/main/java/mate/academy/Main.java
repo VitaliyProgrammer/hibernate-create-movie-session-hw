@@ -1,15 +1,20 @@
 package mate.academy;
 
+import mate.academy.lib.Injector;
+import mate.academy.model.CinemaHall;
 import mate.academy.model.Movie;
+import mate.academy.model.MovieSession;
+import mate.academy.service.CinemaHallService;
 import mate.academy.service.MovieService;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import mate.academy.util.HibernateUtil;
+import mate.academy.service.MovieSessionService;
+import java.time.LocalDate;
 
 
 public class Main {
+    private static final Injector injector = Injector.getInstance("mate.academy");
+
     public static void main(String[] args) {
-        MovieService movieService = null;
+        MovieService movieService = (MovieService) injector.getInstance(MovieService.class);
 
         Movie fastAndFurious = new Movie("Fast and Furious");
         fastAndFurious.setDescription("An action film about street racing, heists, and spies.");
@@ -17,11 +22,26 @@ public class Main {
         System.out.println(movieService.get(fastAndFurious.getId()));
         movieService.getAll().forEach(System.out::println);
 
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        try (Session session = sessionFactory.openSession()) {
-            System.out.println("Hibernate connected successfully!");
-        } catch (Exception e) {
-            System.out.println("Hibernate connection Failed!" + e);
-        }
+        CinemaHallService cinemaHallService = (CinemaHallService)
+                injector.getInstance(CinemaHallService.class);
+
+        MovieSessionService movieSessionService = (MovieSessionService)
+                injector.getInstance(MovieSessionService.class);
+
+        CinemaHall hall = new CinemaHall();
+        hall.setCapacity(150);
+        hall.setDescription("3D IMAX Hall Cinema by Kryvyi Rih");
+        cinemaHallService.add(hall);
+
+        MovieSession movieSession = new MovieSession();
+        movieSession.setMovie(fastAndFurious);
+        movieSession.setCinemaHall(hall);
+        movieSession.setShowTime(java.time.LocalDateTime.now().plusHours(5));
+        movieSessionService.add(movieSession);
+
+        System.out.println("Available today: ");
+        movieSessionService
+                .findAvailableSessions(fastAndFurious.getId(), LocalDate.now())
+                .forEach(System.out::println);
     }
 }

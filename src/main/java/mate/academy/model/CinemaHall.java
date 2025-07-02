@@ -16,7 +16,9 @@ public class CinemaHall {
     private String description;
     private int capacity;
 
-    public CinemaHall() { }
+    public CinemaHall() {
+
+    }
 
     public Long getId() {
         return id;
@@ -44,10 +46,10 @@ public class CinemaHall {
 
     @Override
     public String toString() {
-        return "CinemaHall{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", capacity=" + capacity +
-                '}';
+        return "CinemaHall{"
+                + "id=" + id
+                + ", description='" + description + '\''
+                + ", capacity=" + capacity
+                + '}';
     }
 }

@@ -1,25 +1,23 @@
 package mate.academy.dao.impl;
 
-import java.util.List;
-import java.util.Optional;
 import mate.academy.dao.CinemaHallDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.CinemaHall;
 import mate.academy.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.*;
+import java.util.List;
+import java.util.Optional;
 
 @Dao
 public class CinemaHallDaoImpl implements CinemaHallDao {
-
 
     @Override
     public CinemaHall add(CinemaHall cinemaHall) {
         Transaction transaction = null;
         Session session = null;
         try {
-            session = mate.academy.util.HibernateUtil.getSessionFactory().openSession();
+            session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             session.persist(cinemaHall);
             transaction.commit();
@@ -28,20 +26,29 @@ public class CinemaHallDaoImpl implements CinemaHallDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new mate.academy.exception.DataProcessingException()
+            throw new DataProcessingException("Can`t insert cinemaHall" + cinemaHall, e);
         } finally {
-
+            if (session != null) {
+                session.close();
+            }
         }
-        return null;
     }
 
     @Override
     public Optional<CinemaHall> get(Long id) {
-        return java.util.Optional.empty();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return Optional.ofNullable(session.get(CinemaHall.class, id));
+        } catch (Exception e) {
+            throw new DataProcessingException("Can`t get cinemaHall by id" + id, e);
+        }
     }
 
     @Override
     public List<CinemaHall> getAll() {
-        return null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("FROM CinemaHall", CinemaHall.class).list();
+        } catch (Exception e) {
+            throw new DataProcessingException("Can`t get all CinemaHall", e);
+        }
     }
 }
