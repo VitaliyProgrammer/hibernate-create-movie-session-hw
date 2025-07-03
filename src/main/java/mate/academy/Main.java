@@ -1,5 +1,6 @@
 package mate.academy;
 
+import java.time.LocalDate;
 import mate.academy.lib.Injector;
 import mate.academy.model.CinemaHall;
 import mate.academy.model.Movie;
@@ -7,8 +8,6 @@ import mate.academy.model.MovieSession;
 import mate.academy.service.CinemaHallService;
 import mate.academy.service.MovieService;
 import mate.academy.service.MovieSessionService;
-import java.time.LocalDate;
-
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
@@ -25,9 +24,6 @@ public class Main {
         CinemaHallService cinemaHallService = (CinemaHallService)
                 injector.getInstance(CinemaHallService.class);
 
-        MovieSessionService movieSessionService = (MovieSessionService)
-                injector.getInstance(MovieSessionService.class);
-
         CinemaHall hall = new CinemaHall();
         hall.setCapacity(150);
         hall.setDescription("3D IMAX Hall Cinema by Kryvyi Rih");
@@ -37,6 +33,9 @@ public class Main {
         movieSession.setMovie(fastAndFurious);
         movieSession.setCinemaHall(hall);
         movieSession.setShowTime(java.time.LocalDateTime.now().plusHours(5));
+
+        MovieSessionService movieSessionService = (MovieSessionService)
+                injector.getInstance(MovieSessionService.class);
         movieSessionService.add(movieSession);
 
         System.out.println("Available today: ");

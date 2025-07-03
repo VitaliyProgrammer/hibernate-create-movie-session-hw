@@ -27,7 +27,6 @@ public class MovieSession {
     public MovieSession() {
     }
 
-
     public Long getId() {
         return id;
     }
